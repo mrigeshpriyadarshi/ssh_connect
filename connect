@@ -1,0 +1,154 @@
+#!/bin/bash
+
+base_dir=$(dirname ${0})
+
+events="ssh scp"
+source "${base_dir}/poclabapps.properties"
+
+
+printUsage()
+ {
+        echo -e "FATAL: Please pass 3 arguments as, i.e.,  connect {events} {applications} {dir_location_for_all_files}\n"
+        exit 1
+ }
+
+checkSSHPass()
+{
+    echo "INFO: checking sshpass on ${OSTYPE}"
+    case $OSTYPE in
+        darwin*)  
+                        sudo brew list sshpass  > /dev/null;; 
+        linux*)   
+                    if [ -f /etc/redhat-release ] ; then
+                        sudo rpm -qa | grep sshpass   > /dev/null
+                    elif [ -f /etc/debian_version ] ; then
+                        sudo dpkg -l | grep sshpass   > /dev/null
+                    fi
+                    ;;
+        *)        
+                    echo "FATAL: unknown OS Type: $OSTYPE"
+                    echo -e "FATAL: Supports MacOSX and Linux" 
+                    exit 1
+                    ;;
+    esac
+    return $?
+}
+
+installSSHPass()
+{
+    if [[ checkSSHPass -ne 0 ]]; then
+        echo "INFO: Installing SSHPASS."
+            case "$OSTYPE" in
+                darwin*)
+                            sudo brew install ${mac_brew_url}
+                            ;; 
+                linux*)   
+                            if [ -f /etc/redhat-release ] ; then
+                                sudo rpm -Uvh ${epel_url}
+                                sudo yum -y install sshpass
+                            elif [ -f /etc/debian_version ] ; then
+                                sudo apt-get install sshpass
+                            fi
+                            ;;
+            esac
+    else
+        echo "INFO: sshpass already present on system!!!"
+    fi
+}
+
+checkEvent()
+ {
+        if [[ ${events} =~ ${1} ]]; then
+            return 0
+        else
+            echo "ERROR: Failed to Load Event!!! Please pass available events,i.e, ${events}"
+            printUsage
+        fi
+ }
+
+checkApps()
+ {
+        if [[ ${apps} =~ ${1} ]]; then
+              return 0
+        else
+              echo "ERROR: Failed to Load Apps!!! Please pass available applications,i.e, ${apps}"
+              printUsage
+        fi
+ }
+
+setAppsCreds()
+ {
+        eval user="$"${1}_user
+        eval pswrd="$"${1}_pass
+        if [[ ! -z ${user} ]] && [[ ! -z ${pswrd} ]]; then
+            username=${user}
+            passwrd=${pswrd}
+        elif [[ ${root_apps} =~ ${1} ]]; then
+            username=${root_user}
+            passwrd=${root_password}
+        elif [[ ${admin_apps} =~ ${1} ]]; then
+            username=${admin_user}
+            passwrd=${admin_password}
+        else
+            echo "ERROR: Failed to Load Credentials!!! Please check if ${1} has the creds set."
+            printUsage
+        fi
+        echo "INFO: Credentials set for user: ${username}"
+ }
+
+loadProperty()
+ {
+        checkEvent ${1}
+        event_status=$?
+        checkApps ${2}
+        app_status=$?
+        if [[ ${event_status} -eq 0 && ${app_status} -eq 0 ]]; then
+            source "${base_dir}/poclabapps.properties"
+            event=${1}
+            # eval host="$"batch${2}
+            eval host="$"${2}
+            if [[ ! -z ${host} ]]; then
+                echo "INFO: Host set for ${2} server: ${host}"
+                setAppsCreds ${2}
+            else
+                echo "ERROR: Failed to Load Hosts!!! Please check if ${2} has the hosts set."
+                printUsage
+            fi
+        fi
+ }
+
+doSSH()
+ {
+        echo "INFO: Doing ssh -o StrictHostKeyChecking=no ${username}@${host}..."
+        # ssh -i ${pem_file} ubuntu@${host}
+        sshpass -p ${passwrd} ssh -o StrictHostKeyChecking=no ${username}@${host}
+ }
+
+doSCP()
+ {
+        echo "INFO: Doing scp -o StrictHostKeyChecking=no ${files} ${username}@${host}:/tmp..."
+        # scp -i ${pem_file} ${files}/* ubuntu@${host}:/home/ubuntu
+        sshpass -p ${passwrd} scp -o StrictHostKeyChecking=no ${files} ${username}@${host}:/tmp
+ }
+
+
+
+### MAIN SCRIPT #####
+
+installSSHPass
+
+if [[ $# == 2 ]]; then
+ 	loadProperty ${1} ${2}
+elif [[ $# == 3 ]]; then
+	loadProperty ${1} ${2}
+	files=${3}
+else
+    echo "ERROR: Arguments Missing"
+    printUsage
+fi
+
+if [[ $1 == "scp" && $# == 3 ]]; then
+	doSCP
+else
+	doSSH
+fi
