@@ -1,4 +1,7 @@
 #!/bin/bash
+## ssh connect Script for password based servers
+## Author: Mrigesh Priyadarshi <mrigeshpriyadarshi@gmail.com>
+
 
 base_dir=$(dirname ${0})
 
