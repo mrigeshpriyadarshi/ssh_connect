@@ -16,31 +16,21 @@ Properties
 -----------
 - poclabapps.properties
 
-  -  It requires this property file to define all servers and properties.
+	-  It requires this property file to define all servers and properties.
 
-		apps="stackstorm vcpe odl vdx icx bfo icx2 sdn email"
+			apps="stackstorm vcpe odl vdx icx bfo icx2 sdn email"
+			root_apps="email stackstorm vcpe odl bfo sdn"
+			admin_apps="vdx icx icx2"
+			root_user="root"
+			root_password="root"
+			admin_user="admin"
+			admin_password="password"
 
-		root_apps="email stackstorm vcpe odl bfo sdn"
+			#Apps Information
 
-		admin_apps="vdx icx icx2"
-
-		root_user="root"
-
-		root_password="root"
-
-		admin_user="admin"
-
-		admin_password="password"
-
-
-		Apps Information
-		-----------------------
-
-		stackstorm="10.88.88.140"
-
-		vcpe="10.88.88.161"
-
-		odl="10.88.88.141"
+			stackstorm="10.88.88.140"
+			vcpe="10.88.88.161"
+			odl="10.88.88.141"
 
 Usage
 ---------
