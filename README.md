@@ -37,12 +37,12 @@ Usage
 
 - when connecting through ssh:
 	
-		connect ssh {applications}
+	connect ssh {applications}
 or
 
 - when connecting through scp:
 	
-		connect scp {applications} {local_dir_location_for_all_files_to_be_copied}  {remote_dir_location_for_all_files_to_be_copied}
+	connect scp {applications} {local_dir_location_for_all_files_to_be_copied} {remote_dir_location_for_all_files_to_be_copied}
 
 Supports
 ------------
