@@ -42,7 +42,7 @@ or
 
 - when connecting through scp:
 	
-	`connect scp {applications} {local_dir_location_for_all_files_to_be_copied} {remote_dir_location_for_all_files_to_be_copied}`
+	`connect scp {applications} {local_dir_of_all_files_to_be_copied} {remote_dir_of_all_files_to_be_copied}`
 
 Supports
 ------------
