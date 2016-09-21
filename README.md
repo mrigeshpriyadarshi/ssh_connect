@@ -42,7 +42,7 @@ or
 
 - when connecting through scp:
 	
-		connect scp {applications} {dir_location_for_all_files}
+		connect scp {applications} {local_dir_location_for_all_files_to_be_copied}  {remote_dir_location_for_all_files_to_be_copied}
 
 Supports
 ------------
@@ -54,10 +54,13 @@ Supports
 	Debian
 
 License
------------
-Author: Mrigesh Priyadarshi
+------------
 
-Copyright, [Mrigesh Priyadarshi](mailto:mrigeshpriyadarshi@gmail.com).
+|  |  |
+| ------ | --- |
+| **Author:** | Mrigesh Priyadarshi |
+| **Copyright:** | [Mrigesh Priyadarshi](mailto:mrigeshpriyadarshi@gmail.com) |
+| **License:** | Apache License, Version 2.0 |
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 
