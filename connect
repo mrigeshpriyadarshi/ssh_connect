@@ -11,7 +11,8 @@ source "${base_dir}/poclabapps.properties"
 
 printUsage()
  {
-        echo -e "FATAL: Please pass 3 arguments as, i.e.,  connect {events} {applications} {dir_location_for_all_files}\n"
+        echo -e "FATAL: Either, pass 2 arguments as, i.e.,  connect {events} {applications}\n"
+        echo -e "FATAL: OR, Please pass 4 arguments as, i.e.,  connect {events} {applications} {local_dir_location_for_all_files_to_be_copied} {remote_dir_location_for_all_files_to_be_copied}\n"
         exit 1
  }
 
@@ -129,9 +130,9 @@ doSSH()
 
 doSCP()
  {
-        echo "INFO: Doing scp -o StrictHostKeyChecking=no ${files} ${username}@${host}:/tmp..."
+        echo "INFO: Doing scp -o StrictHostKeyChecking=no ${files} ${username}@${host}:${remote_dir}/..."
         # scp -i ${pem_file} ${files}/* ubuntu@${host}:/home/ubuntu
-        sshpass -p ${passwrd} scp -o StrictHostKeyChecking=no ${files} ${username}@${host}:/tmp
+        sshpass -p ${passwrd} scp -o StrictHostKeyChecking=no ${files} ${username}@${host}:${remote_dir}/
  }
 
 
@@ -142,9 +143,10 @@ installSSHPass
 
 if [[ $# == 2 ]]; then
  	loadProperty ${1} ${2}
-elif [[ $# == 3 ]]; then
+elif [[ $# == 4 ]]; then
 	loadProperty ${1} ${2}
 	files=${3}
+            remote_dir=${4}
 else
     echo "ERROR: Arguments Missing"
     printUsage
